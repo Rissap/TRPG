@@ -20,9 +20,20 @@ class WorldInterface():
 class PersonInterface():
     """docstring for PlayerInterface"""
     def __init__(self):
+        self.phrase = ""
         self.answer = ""
         self.keyboard = ""
         self.action = 0
+
+        self.name = ""
+        self.gender = ""
+        
+        self.age = 0
+        self.race = ""
+        self.bio = ""
+
+    def setPhrase(self, _text):
+        self.phrase = _text
 
     def getAnswer(self):
         return self.answer

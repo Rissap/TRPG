@@ -17,15 +17,20 @@ class World(WorldInterface):
         """save all data from playerList to Database"""
         pass
 
-    def raisePlayerData(self, _id):
+    def raisePlayerData(self, _id, _text):
         """get ConcretePlayer class"""
+        _text = _text.replace("\"", "`").replace("'", "`")
+
         for player in self.PlayerList:
             if player.id == _id:
                 self.ConcretePlayer = player
-                break
+                self.ConcretePlayer.phrase = _text
+                return None
+
         #if player not in list
         self.ConcretePlayer = SimplePlayer(_id)
         self.PlayerList.append(self.ConcretePlayer)
+        self.ConcretePlayer.phrase = _text
 
     def refreshPlayerList(self):
         """set ConcretePlayer with changed data on his place into the list"""
@@ -34,14 +39,15 @@ class World(WorldInterface):
                 self.PlayerList[position] = self.ConcretePlayer
                 break
 
-    def updatePlayerAction(self, _text):
+    def updatePlayerAction(self):
         """add a phrase into the action for future processing"""
-        self.Database.getAction(self.ConcretePlayer, _text)
+        self.Database.getAction(self.ConcretePlayer)
 
     def handlePlayerAction(self):
         """use fabric to set ActionClass and call a handle method"""
         self.Action = self.ActionFactory.getAction(self.ConcretePlayer)
-        self.Action.handlePlayerAction(self.ConcretePlayer)
+        self.ConcretePlayer = self.Action.handlePlayerAction(self.ConcretePlayer)
         self.refreshPlayerList()
+
 
 

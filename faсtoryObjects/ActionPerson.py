@@ -1,6 +1,7 @@
 from interfaces import ActionInterface
 
-class Quest(ActionInterface):
+
+class Person(ActionInterface):
     def __init__(self, _Database):
         self.Database = _Database
 

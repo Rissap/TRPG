@@ -50,13 +50,11 @@ class Control():
             if self.Message.new:
                 #set special AdminClass that can operate special foo and stop game process
 
-                self.World.raisePlayerData(self.Message.playerID)
-                self.World.updatePlayerAction(self.Message.playerText)
-
+                self.World.raisePlayerData(self.Message.playerID, self.Message.playerText)
                 self.World.handlePlayerAction()
+                self.World.updatePlayerAction()
 
                 self.Message.setText(self.World.ConcretePlayer.getAnswer())
-
                 self.Message.setKeyboard(self.World.ConcretePlayer.getKeyboard())
                 
                 #self.Message.setAttachments(self.Database.getAttachments())
