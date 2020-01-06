@@ -17,14 +17,14 @@ LOAD_PLAYERS = """ SELECT * FROM players JOIN player_race ON player_race.id=play
 
 SAVE_RACE_DATA = """ INSERT INTO player_race VALUES ({0},"{1}",{2},{3},{4},{5},{6},{7},{8},{9}) """
 
-SAVE_PERSON_DATA = """ INSERT INTO players VALUES ({0},{1},"{2}","{3}",{4},"{5}","{6}","{7}") """
+SAVE_PERSON_DATA = """ INSERT INTO players VALUES ({0},{1},"{2}","{3}",{4},"{5}","{6}","{7}", "{8}", "{9}") """
 
 UPDATE_RACE_DATA = """ UPDATE player_race SET name="{1}", health={2}, mana={3}, attack={4}, defence={5}, magic_attack={6}, magic_defence={7}, speed={8}, weight={9} WHERE id={0}"""
 
-UPDATE_PERSON_DATA = """ UPDATE players SET action="{2}", name="{3}", age={4}, gender="{5}", bio="{6}", born="{7}" WHERE id={0} """
+UPDATE_PERSON_DATA = """ UPDATE players SET action="{2}", name="{3}", age={4}, gender="{5}", bio="{6}", born="{7}", position="{8}", explored="{9}" WHERE id={0} """
+
 
 '''
-
 IS_RACE = """ SELECT * from `race` WHERE name='{0}' AND id<5 """
 
 ALL_FROM_PLAYER = """ SELECT * FROM player  """
@@ -35,8 +35,6 @@ NEW_PLAYER_DATA = """ INSERT INTO player VALUES ({0}, {1}, '{2}', '{3}', '{4}', 
 
 OLD_PLAYER_DATA = """ UPDATE player SET action={1} name='{2}' gender='{3}' race='{4}' age={5} bio='{6}' register='{7}' gold = {8} glory={9} position = '{10}' """
 '''
-
-
 
 
 class GlobalDatabase():
@@ -66,7 +64,7 @@ class GlobalDatabase():
             tmp = Player(PersonData(el[0]))
             tmp.data.load_data(el)
 
-            tmp.race = race_list[el[9]]()
+            tmp.race = race_list[el[11]]()
             tmp.race.load_data(el)
 
             player_list.append(tmp)
@@ -93,6 +91,14 @@ class GlobalDatabase():
             name = player.data.name.replace("\"", "`")
             name = name.replace("'", "`")
 
+            position = str(player.data.position[0])+" "+str(player.data.position[1])
+            explored = ""
+            for x in player.data.explored:
+                explored+=str(x[0])+" "+str(x[1])+"|"
+
+
+            print(position, explored)
+
             self.base.execute(race.format(
                 race_id,
                 player.race.name,
@@ -114,7 +120,9 @@ class GlobalDatabase():
                 player.data.age,
                 player.data.gender,
                 player.data.bio,
-                player.data.born
+                player.data.born,
+                position,
+                explored
             ))
 
             self.data.commit()

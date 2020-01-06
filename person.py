@@ -1,6 +1,7 @@
 from abc import ABC
 from abc import abstractmethod
 
+import numpy
 
 class Alasi():
     def __init__(self):
@@ -144,6 +145,8 @@ class PersonData():
         self.age = 0
         self.bio = ""
         self.born = ""
+        self.position = []
+        self.explored = ""
 
     def load_data(self, data):
         self.register = True
@@ -153,7 +156,16 @@ class PersonData():
         self.gender = data[5]
         self.bio = data[6]
         self.born = data[7]
+        self.position = numpy.array(data[8].split(" "), dtype=int)
+        self.explored = self.get_explored(data[9])
+        print("load data =", self.position, self.explored)
 
+    def get_explored(self, raw_pos):
+        tmp = raw_pos[:-1].split("|")
+        array = []
+        for el in tmp:
+            array.append(el.split(" "))
+        return numpy.array(array, dtype=int)
 
 race_list = {"Хвостатые":Fox, "Перевёртыши":Changer, "Элементали":Elemental, "Аласи":Alasi, "Артифексы":Artifex}
 

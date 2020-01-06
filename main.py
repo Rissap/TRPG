@@ -13,8 +13,6 @@ from person import Player
 from person import PersonData
 
 
-
-
 class GlobalControlHandler():
     def __init__(self):
         self.action = None #one from action module
@@ -82,7 +80,7 @@ class GlobalControlHandler():
         self.answer, self.keyboard, self.image = self.action.get_reply()
 
     def reply(self, bot):
-        #print(self.this_player)
+        print(self.image)
         bot.send_message(self.this_player.data.uniq,
             self.answer, reply_markup=self.keyboard)
         if self.image!="":
@@ -92,6 +90,7 @@ class GlobalControlHandler():
 Global = GlobalControlHandler()
 Global.load_all()
 
+print("START")
 
 bot = telebot.TeleBot(token)
 

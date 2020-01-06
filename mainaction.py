@@ -6,7 +6,8 @@ from database import DATABASE
 from abc import ABC
 from abc import abstractmethod
 
-from keygen import KeyboardGenerator
+from keygen import KEYGEN
+from map import MAP
 
 
 class Action(ABC):
@@ -31,20 +32,26 @@ class WorldAction(Action):
         self.image = ""
 
         self.mode = 1000
-        self.keygen = KeyboardGenerator()
+        self.keygen = KEYGEN
 
 
     def handle_special(self):
-        pass
+        if self.player.data.text == "Глобальная":
+            self.image = MAP.get_full_map(self.player.data.explored, self.player.data.position)
+
+        elif self.player.data.text == "Местности":
+            
+            self.image = MAP.get_local_map(self.player.data.explored, self.player.data.position)
+
+        self.player.data.action = 1000
 
 
     def handle_common(self):
-
+        
         data = DATABASE.get_answer(self.player.data.text, self.mode)
-        self.mode = 2
 
         self.answer = data[0].replace(r"\n", "\n")+"\n"+self.answer
-        self.keyboard=data[1]
+        self.keyboard = data[1]
 
     def get_reply(self):
         if self.keyboard == "":
@@ -64,17 +71,16 @@ class QuestAction(Action):
         self.image = ""
 
         self.mode = 2000
-        self.keygen = KeyboardGenerator()
+        self.keygen = KEYGEN
 
 
     def handle_special(self):
-        pass
+        self.player.data.action = 2000
 
 
     def handle_common(self):
 
         data = DATABASE.get_answer(self.player.data.text, self.mode)
-        self.mode = 2
 
         self.answer = data[0].replace(r"\n", "\n")+"\n"+self.answer
         self.keyboard=data[1]
@@ -97,17 +103,16 @@ class PersonAction(Action):
         self.image = ""
 
         self.mode = 3000
-        self.keygen = KeyboardGenerator()
+        self.keygen = KEYGEN
 
 
     def handle_special(self):
-        pass
+        self.player.data.action = 3000
 
 
     def handle_common(self):
        
         data = DATABASE.get_answer(self.player.data.text, self.mode)
-        self.mode = 2
 
         self.answer = data[0].replace(r"\n", "\n")+"\n"+self.answer
         self.keyboard=data[1]
@@ -130,17 +135,16 @@ class NoteAction(Action):
         self.image = ""
 
         self.mode = 4000
-        self.keygen = KeyboardGenerator()
+        self.keygen = KEYGEN
 
 
     def handle_special(self):
-        pass
+        self.player.data.action = 4000
 
 
     def handle_common(self):
         
         data = DATABASE.get_answer(self.player.data.text, self.mode)
-        self.mode = 2
 
         self.answer = data[0].replace(r"\n", "\n")+"\n"+self.answer
         self.keyboard=data[1]
