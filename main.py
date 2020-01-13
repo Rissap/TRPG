@@ -13,8 +13,6 @@ from person import Player
 from person import PersonData
 
 
-
-
 class GlobalControlHandler():
     def __init__(self):
         self.action = None #one from action module
@@ -31,6 +29,7 @@ class GlobalControlHandler():
     def save_all(self):
         for player in self.players:
             DATABASE.save_player(player)
+            DATABASE.save_notes(player.data.uniq, player.note.note_list)
 
     def load_all(self):
         self.players = DATABASE.load_player()
@@ -82,7 +81,8 @@ class GlobalControlHandler():
         self.answer, self.keyboard, self.image = self.action.get_reply()
 
     def reply(self, bot):
-        #print(self.this_player)
+        if self.answer == "":
+        	self.answer = "Я не могу ответить"
         bot.send_message(self.this_player.data.uniq,
             self.answer, reply_markup=self.keyboard)
         if self.image!="":
@@ -92,6 +92,7 @@ class GlobalControlHandler():
 Global = GlobalControlHandler()
 Global.load_all()
 
+print("START")
 
 bot = telebot.TeleBot(token)
 

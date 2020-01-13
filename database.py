@@ -3,6 +3,7 @@ import sqlite3
 from person import Player
 from person import PersonData
 from person import race_list
+from person import Note
 
 GET_ANSWER = """ SELECT message.data, keyboard.data FROM scripts 
                 JOIN message ON scripts.message=message.id
@@ -11,20 +12,27 @@ GET_ANSWER = """ SELECT message.data, keyboard.data FROM scripts
 
 LATEST_ID = """ SELECT max(id) FROM player_race """
 
+LATEST_NOTE_ID = """ SELECT max(id) FROM notes """
+
+GET_PLAYER_NOTE = """ SELECT data FROM notes WHERE player = {0} """
+
+SAVE_PLAYER_NOTES = """ INSERT INTO notes VALUES ({0},{1},"{2}")"""
+
+DROP_PLAYER_NOTES = """ DELETE FROM notes WHERE player={0}"""
+
 THIS_ID = """ SELECT player_race FROM players WHERE id={0} """
 
 LOAD_PLAYERS = """ SELECT * FROM players JOIN player_race ON player_race.id=players.player_race """
 
-SAVE_RACE_DATA = """ INSERT INTO player_race VALUES ({0},"{1}",{2},{3},{4},{5},{6},{7},{8},{9}) """
+SAVE_RACE_DATA = """ INSERT INTO player_race VALUES ({0},"{1}",{2},{3},{4},{5},{6},{7},{8}) """
 
-SAVE_PERSON_DATA = """ INSERT INTO players VALUES ({0},{1},"{2}","{3}",{4},"{5}","{6}","{7}") """
+SAVE_PERSON_DATA = """ INSERT INTO players VALUES ({0},{1},"{2}","{3}",{4},"{5}","{6}","{7}","{8}") """
 
-UPDATE_RACE_DATA = """ UPDATE player_race SET name="{1}", health={2}, mana={3}, attack={4}, defence={5}, magic_attack={6}, magic_defence={7}, speed={8}, weight={9} WHERE id={0}"""
+UPDATE_PERSON_DATA = """ UPDATE players SET age={4}, gender="{5}", bio="{6}", born="{7}", position="{8}" WHERE id={0} """
 
-UPDATE_PERSON_DATA = """ UPDATE players SET action="{2}", name="{3}", age={4}, gender="{5}", bio="{6}", born="{7}" WHERE id={0} """
+UPDATE_RACE_DATA = """ UPDATE player_race SET health={2}, mana={3}, attack={4}, defence={5}, magic_attack={6}, magic_defence={7}, weight={8} WHERE id={0}"""
 
 '''
-
 IS_RACE = """ SELECT * from `race` WHERE name='{0}' AND id<5 """
 
 ALL_FROM_PLAYER = """ SELECT * FROM player  """
@@ -35,8 +43,6 @@ NEW_PLAYER_DATA = """ INSERT INTO player VALUES ({0}, {1}, '{2}', '{3}', '{4}', 
 
 OLD_PLAYER_DATA = """ UPDATE player SET action={1} name='{2}' gender='{3}' race='{4}' age={5} bio='{6}' register='{7}' gold = {8} glory={9} position = '{10}' """
 '''
-
-
 
 
 class GlobalDatabase():
@@ -66,8 +72,14 @@ class GlobalDatabase():
             tmp = Player(PersonData(el[0]))
             tmp.data.load_data(el)
 
-            tmp.race = race_list[el[9]]()
-            tmp.race.load_data(el)
+            for race in race_list.keys():
+                if race in el:
+                    tmp.race = race_list[race]()
+            tmp.race.load_data(el[len(el)-9:])
+
+            note = self.base.execute(GET_PLAYER_NOTE.format(el[0])).fetchall()
+            if note != []:
+                tmp.note = Note(note)
 
             player_list.append(tmp)
 
@@ -92,6 +104,19 @@ class GlobalDatabase():
 
             name = player.data.name.replace("\"", "`")
             name = name.replace("'", "`")
+            position = str(player.data.position[0])+" "+str(player.data.position[1])
+
+            self.base.execute(data.format(
+                player.data.uniq,
+                race_id,
+                player.data.action,
+                name,
+                player.data.age,
+                player.data.gender,
+                player.data.bio,
+                player.data.born,
+                position
+            ))
 
             self.base.execute(race.format(
                 race_id,
@@ -102,88 +127,25 @@ class GlobalDatabase():
                 player.race.defence[0],
                 player.race.magic_attack[0],
                 player.race.magic_defence[0],
-                player.race.speed[0],
-                player.race.weight[0]
+                player.race.weight[1]
             ))
 
-            self.base.execute(data.format(
-                player.data.uniq,
-                race_id,
-                player.data.action,
-                name,
-                player.data.age,
-                player.data.gender,
-                player.data.bio,
-                player.data.born
-            ))
 
             self.data.commit()
 
-
-DATABASE = GlobalDatabase()
-
-'''
-
-
-
-
-    def getAction(self, _Player):
-        string = self.base.execute(GET_ANSWER.format(_Player.phrase)).fetchall()        
-        if string == []:
-            string = self.base.execute(GET_ANSWER.format(_Player.register)).fetchall()
-
-        _Player.answer = string[0][0].replace(r"\n", "\n")+_Player.answer
-        _Player.keyboard = string[0][1]
-        _Player.action = string[0][2]
-
-        return _Player
-
-    def isAvailableRace(self, phrase):
-        race = self.base.execute(IS_RACE.format(phrase)).fetchall()
-        print(phrase)
-        print(race)
-        if race == []:
-            return False
-        return True
-
-    def getAllInvenntory(self, _id):
-        return None
-
-    def getAllQuest(self, _id):
-        self.base.execute()
-
-
-        return None
-
-    def raiseAllData(self):
-        playerData = self.base.execute(ALL_FROM_PLAYER).fetchall()
-        #get race from data collection and from dictionary with races select one and call copy constructor
-        mass = []
-        for el in playerData:
-            pers = race[el[4]](None)
-            pers.setData(el)
-
-            quest = self.getAllQuest(pers.id)
-            inventory = self.getAllInventory(pers.id)
-
-            questCont = QuestContainer(quest)
-            inventoryCont = InventoryContainer(inventory)
-
-            pers.setContainer(questCont, inventoryCont)
-            mass.append(pers)
-
-        return mass
+    def save_notes(self, uniq, notes):
+        self.base.execute(DROP_PLAYER_NOTES.format(uniq))
         
-    def saveAllData(self, mass):
-        for player in mass:
-            if self.base.execute(PLAYER_ALREADY_EXIST.format(player.id)).fetchall()==[]:
-                STRING_DATA = NEW_PLAYER_DATA
-            else:
-                STRING_DATA = OLD_PLAYER_DATA
+        try:
+            note_id = self.base.execute(LATEST_NOTE_ID).fetchall()[0][0]+1
+        except:
+            note_id = 0
 
-            self.base.execute(
-                STRING_DATA.format(player.id, player.action, player.name, player.gender, 
-                    player.race, player.age, player.bio, player.register, player.gold, player.glory, ",".join(map(str, player.position)) ))
+        for el in notes:
+            self.base.execute(SAVE_PLAYER_NOTES.format(note_id, uniq, el))
+            note_id+=1
 
         self.data.commit()
-'''
+
+
+DATABASE = GlobalDatabase()

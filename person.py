@@ -1,6 +1,9 @@
 from abc import ABC
 from abc import abstractmethod
 
+import numpy
+from datetime import date
+
 
 class Alasi():
     def __init__(self):
@@ -11,21 +14,18 @@ class Alasi():
         self.defence = [1,1]
         self.magic_attack = [0.3, 0.3]
         self.magic_defence = [0.4,0.4]
-        self.speed = [3,3]
         self.weight = [0,30]
 
     def load_data(self, data):
-        self.health[0] = data[10]
-        self.mana[0] = data[11]
-        self.attack[0] = data[12]
-        self.defence[0] = data[13]
-        self.magic_attack[0] = data[14]
-        self.magic_defence[0] = data[15]
-        self.speed[0] = data[16]
-        self.weight[0] = data[17]
-
-    def __str__(self):
-        return self.name
+        #[9] is id for player race
+        #[10] is for name of race
+        self.health[0] = data[2]
+        self.mana[0] = data[3]
+        self.attack[0] = data[4]
+        self.defence[0] = data[5]
+        self.magic_attack[0] = data[6]
+        self.magic_defence[0] = data[7]
+        self.weight[0] = data[8]
 
 
 class Elemental():
@@ -37,21 +37,18 @@ class Elemental():
         self.defence = [1,1]
         self.magic_attack = [0.4,0.4]
         self.magic_defence = [0.4,0.4]
-        self.speed = [4,4]
         self.weight = [0,30]
 
     def load_data(self, data):
-        self.health[0] = data[10]
-        self.mana[0] = data[11]
-        self.attack[0] = data[12]
-        self.defence[0] = data[13]
-        self.magic_attack[0] = data[14]
-        self.magic_defence[0] = data[15]
-        self.speed[0] = data[16]
-        self.weight[0] = data[17]
-
-    def __str__(self):
-        return self.name
+       #[9] is id for player race
+        #[10] is for name of race
+        self.health[0] = data[2]
+        self.mana[0] = data[3]
+        self.attack[0] = data[4]
+        self.defence[0] = data[5]
+        self.magic_attack[0] = data[6]
+        self.magic_defence[0] = data[7]
+        self.weight[0] = data[8]
 
 
 class Artifex():
@@ -63,21 +60,18 @@ class Artifex():
         self.defence = [5,5]
         self.magic_attack = [0.1,0.1]
         self.magic_defence = [0.1,0.1]
-        self.speed = [6,6]
         self.weight = [0,60]
 
     def load_data(self, data):
-        self.health[0] = data[10]
-        self.mana[0] = data[11]
-        self.attack[0] = data[12]
-        self.defence[0] = data[13]
-        self.magic_attack[0] = data[14]
-        self.magic_defence[0] = data[15]
-        self.speed[0] = data[16]
-        self.weight[0] = data[17]
-
-    def __str__(self):
-        return self.name
+        #[9] is id for player race
+        #[10] is for name of race
+        self.health[0] = data[2]
+        self.mana[0] = data[3]
+        self.attack[0] = data[4]
+        self.defence[0] = data[5]
+        self.magic_attack[0] = data[6]
+        self.magic_defence[0] = data[7]
+        self.weight[0] = data[8]
 
 
 class Changer():
@@ -89,21 +83,18 @@ class Changer():
         self.defence = [3,3]
         self.magic_attack = [0.2,0.2]
         self.magic_defence = [0.2,0.2]
-        self.speed = [5,5]
         self.weight = [0,40]
 
     def load_data(self, data):
-        self.health[0] = data[10]
-        self.mana[0] = data[11]
-        self.attack[0] = data[12]
-        self.defence[0] = data[13]
-        self.magic_attack[0] = data[14]
-        self.magic_defence[0] = data[15]
-        self.speed[0] = data[16]
-        self.weight[0] = data[17]
-
-    def __str__(self):
-        return self.name
+        #[9] is id for player race
+        #[10] is for name of race
+        self.health[0] = data[2]
+        self.mana[0] = data[3]
+        self.attack[0] = data[4]
+        self.defence[0] = data[5]
+        self.magic_attack[0] = data[6]
+        self.magic_defence[0] = data[7]
+        self.weight[0] = data[8]
 
 
 class Fox():
@@ -115,21 +106,73 @@ class Fox():
         self.defence = [1, 1]
         self.magic_attack = [0.1, 0.1]
         self.magic_defence = [0.1, 0.1]
-        self.speed = [2, 2]
         self.weight = [0, 60]
 
     def load_data(self, data):
-        self.health[0] = data[10]
-        self.mana[0] = data[11]
-        self.attack[0] = data[12]
-        self.defence[0] = data[13]
-        self.magic_attack[0] = data[14]
-        self.magic_defence[0] = data[15]
-        self.speed[0] = data[16]
-        self.weight[0] = data[17]
+        #[0] is id for player race
+        #[1] is for name of race
+        self.health[0] = data[2]
+        self.mana[0] = data[3]
+        self.attack[0] = data[4]
+        self.defence[0] = data[5]
+        self.magic_attack[0] = data[6]
+        self.magic_defence[0] = data[7]
+        self.weight[0] = data[8]
 
-    def __str__(self):
-        return self.name
+
+class Own():
+    def __init__(self, data):
+        self.own_list = data
+
+    def get_list(self):
+        if self.own_list == []:
+            return "Отсутствует"
+        else:
+            return "pass"
+
+
+class Dignity():
+    def __init__(self, data):
+        self.dignity_list = data
+
+    def get_list(self):
+        if self.dignity_list == []:
+            return "Путешественник"
+        else:
+            return "Никто"
+
+
+class Note():
+    def __init__(self, data):
+        self.note_list = []
+        for el in data:
+            self.note_list.append(el[0])
+
+    def add_note(self, text):
+        tmp = str(date.today())+" `"+text+"`"
+        self.note_list.append(tmp)
+
+    def get_list(self):
+        tmp = ""
+        if self.note_list == []:
+            return "У тебя нет заметок."
+
+        for el in range(len(self.note_list)):
+            tmp+="№"+str(el+1)+" "+self.note_list[el]+"\n"
+        
+        return tmp
+
+    def drop_note(self, number):
+        try:
+            number = int(number)
+            if number>len(self.note_list):
+                raise ValueError
+            else:
+                self.note_list.pop(number-1)
+        except:
+            pass
+
+
 
 
 class PersonData():
@@ -144,15 +187,29 @@ class PersonData():
         self.age = 0
         self.bio = ""
         self.born = ""
+        self.position = []
+        self.explored = ""
 
     def load_data(self, data):
+        #uniq already set
+        #only registered players saved
         self.register = True
-        self.action = data[2]
-        self.name = data[3]
+        #action set by default
+        self.action = 0
+
+        self.name = data[3] #+
         self.age = data[4]
         self.gender = data[5]
         self.bio = data[6]
         self.born = data[7]
+        self.position = numpy.array(data[8].split(" "), dtype=int)
+
+    def get_explored(self, raw_pos):
+        tmp = raw_pos[:-1].split("|")
+        array = []
+        for el in tmp:
+            array.append(el.split(" "))
+        return numpy.array(array, dtype=int)
 
 
 race_list = {"Хвостатые":Fox, "Перевёртыши":Changer, "Элементали":Elemental, "Аласи":Alasi, "Артифексы":Artifex}
@@ -162,6 +219,9 @@ class Player():
     def __init__(self, data):
         self.data = data
         self.race = None
+        self.note = Note([])
+        self.own = Own([])
+        self.dignity = Dignity([])
 
     def new_message(self, text):
         self.data.text = text
@@ -170,4 +230,31 @@ class Player():
         self.race = race_list[race]()
 
     def __str__(self):
-        return str(self.data.gender)+" "+self.data.name+" из расы "+str(self.race)+" в возрасте "+str(self.data.age)+"\n"+str(self.data.bio)
+        return str(self.data.gender)+" "+self.data.name+" из расы "+str(self.race.name)+" в возрасте "+str(self.data.age)+"\n"+str(self.data.bio)
+
+    def get_attack(self):
+        return str(self.race.attack[0])
+
+    def get_defence(self):
+        return str(self.race.defence[0])
+
+    def get_mag_attack(self):
+        return str(self.race.magic_attack[0])
+
+    def get_mag_defence(self):
+        return str(self.race.magic_defence[0])
+
+    def get_weight(self):
+        return "0/"+str(self.race.weight[1])
+
+    def get_timelapse(self):
+        a = date.fromisoformat(self.data.born)
+        b = date.today()
+
+        return str((b-a).days)
+
+    def get_own(self):
+        return self.own.get_list()
+
+    def get_dignity(self):
+        return self.dignity.get_list()

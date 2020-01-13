@@ -1,4 +1,5 @@
 import telebot
+import numpy
 
 from abc import ABC
 from abc import abstractmethod
@@ -6,7 +7,7 @@ from abc import abstractmethod
 from datetime import date
 
 from database import DATABASE
-from keygen import KeyboardGenerator
+from keygen import KEYGEN
 
 from mainaction import WorldAction
 from mainaction import PersonAction
@@ -14,7 +15,7 @@ from mainaction import QuestAction
 from mainaction import NoteAction
 
 
-
+DEFAULT_POSITION = [2500, 2500]
 
 
 class Action(ABC):
@@ -42,7 +43,7 @@ class PreRegisterAction(Action):
         self.keyboard = ""
         self.image = ""
 
-        self.keygen = KeyboardGenerator()
+        self.keygen = KEYGEN
 
     def set_player(self, player):
         self.player = player
@@ -78,7 +79,7 @@ class RegisterAction(Action):
         self.mode = 2
         self.race_list = ["Аласи","Элементали","Перевёртыши","Артифексы"]
         self.gender_list = ["Господин", "Госпожа"]
-        self.keygen = KeyboardGenerator()
+        self.keygen = KEYGEN
 
     def set_player(self, player):
         self.player = player
@@ -140,8 +141,9 @@ class RegisterAction(Action):
 
                 self.player.data.action == 0
                 self.player.data.text = "registered"
-                born = date.today()
-                self.player.data.born = str(born.day)+"-"+str(born.month)+"-"+str(born.year)
+                self.player.data.born = str(date.today())
+                self.player.data.position = DEFAULT_POSITION
+                self.image = open("database/registered.png", 'rb')
             else:
                 self.player.data.text = "Начать приключение!"
                 self.player.data.action = None
@@ -174,11 +176,12 @@ class DefaultHandler():
     def __init__(self, type_reply):
         self.type_reply = type_reply
 
+        self.player = None
         self.answer = ""
         self.keyboard = ""
         self.image = ""
         
-        self.keygen = KeyboardGenerator()
+        self.keygen = KEYGEN
 
     def set_player(self, player):
         self.player = player
@@ -200,7 +203,6 @@ class DefaultHandler():
 
         else:
             pass
-
 
     def get_reply(self):
         keyboard_data = telebot.types.ReplyKeyboardMarkup(True)
@@ -233,7 +235,11 @@ class MainAction():
         txt = self.player.data.text
         act = self.player.data.action
 
-        if act in range(1000, 2000) or txt == "Мир":
+        if txt == "Назад" or act == 999:
+            self.action_handler = DefaultHandler("back")
+            self.player.data.action = 0
+        
+        elif act in range(1000, 2000) or txt == "Мир":
             self.action_handler = WorldAction(self.player)
         
         elif act in range(2000, 3000) or txt == "Задания":
@@ -245,12 +251,8 @@ class MainAction():
         elif act in range(4000, 5000) or txt == "Блокнот":
             self.action_handler = NoteAction(self.player)
         
-        elif txt == "Назад" or act == 999:
-            self.action_handler = DefaultHandler("back")
         else:
             self.action_handler = DefaultHandler("unknown")
-
-
 
     def get_reply(self):
         return self.answer_data
