@@ -1,8 +1,24 @@
+import copy
 import numpy
 from PIL import Image
 
-SPREAD = 400
-LOCAL_SPREAD = 50
+SPREAD = 250
+LOCAL_SPREAD = 6
+
+COLOR_DATA = {
+    (227, 227, 227): "Дорога населенного пункта",
+    (40, 40, 40): "Один из многочисленных домов",
+    (130, 80, 130): "Доки, где корабли разгружают груз а моряки танцуют с портовыми девками",
+    (100, 150, 30): "Торговая лавка, скупающая всё по выгодной цене",
+    (120, 180, 255): "Храм для молитв и исцелений",
+    (100, 70, 0): "Таверна с вечно горящим камином",
+    (255, 255, 255): "Центр города",
+    (10, 10, 50): "Глубокий тёмный океан",
+    (30, 140, 200): "Быстрая река",
+    (30, 100, 150): "Озеро, полное рыбы",
+    (80, 255, 120): "Влажный песчаный берег",
+    (255, 255, 130): "Главное учебное здание - Пансионат"
+}
 
 PLACE_COLOR = {
     "0":numpy.array([0, 30, 255], dtype=int),
@@ -30,84 +46,52 @@ PLACE_COLOR = {
 
 class GlobalMap():
     def __init__(self):
-        self.map = numpy.nan_to_num(numpy.genfromtxt('database/map.txt', delimiter=',')).astype(int)
+        #self.map = numpy.nan_to_num(numpy.genfromtxt('database/map.txt', delimiter=',')).astype(int)
         #(3042, 3042)
-        self.img_map = numpy.array(Image.open("database/full_map.png"))
+        self.img_map = Image.open("database/test_map.png")
 
-    def get_full_map(self, explored, position):
+    def calc_position(self, x, y, size):
+        x1 = 0 if x-size<=0 else x-size
+        x2 = 5000 if x+size>=5000 else x+size
+
+        y1 = 0 if y-size<=0 else y-size
+        y2 = 5000 if y+size>=5000 else y+size
+
+        return x1, x2, y1, y2
+
+    def get_map(self, position, size):
         x, y = position
-        #x
-        if x - SPREAD <=0:
-            x1 = 0
-        else:
-            x1 = x-SPREAD
+        x1, x2, y1, y2 = self.calc_position(x, y, size)
+        #set player position
+        tmp = copy.copy(self.img_map)
+        tmp.putpixel((x, y), (255, 0, 0))
+        tmp = tmp.crop((x1, y1, x2+1, y2+1))
+        tmp = tmp.resize((500, 500), Image.NEAREST)
 
-        if x+SPREAD>=3041:
-            x2 = 3041
-        else:
-            x2 = x+SPREAD
-        #y
-        if y - SPREAD <=0:
-            y1 = 0
-        else:
-            y1 = y-SPREAD
 
-        if y+SPREAD>=3041:
-            y2 = 3041
-        else:
-            y2 = y+SPREAD
-
-        tmp = []
-        for i in range(x1, x2):
-            tmp.append([])
-            for j in range(y1, y2):
-                tmp[-1].append(self.img_map[i][j])
-
-        tmp = numpy.array(tmp)
-        im = Image.fromarray(tmp)
-        im.save("database/tmp_img.png")
-
-        del tmp
-        del im
+        tmp.save("database/tmp_img.png")
 
         return open("database/tmp_img.png", 'rb')
 
-    def get_local_map(self, explored, position):
-        x, y = position
-        #x
-        if x - LOCAL_SPREAD <=0:
-            x1 = 0
-        else:
-            x1 = x-LOCAL_SPREAD
+    def move_person(self, _from, _to):
+        print("coords - ",_from, _to)
+        x, y = _from
+        try:
+            x1, y1 = int(_to[0]), int(_to[1])
 
-        if x+LOCAL_SPREAD>=3041:
-            x2 = 3041
-        else:
-            x2 = x+LOCAL_SPREAD
-        #y
-        if y - LOCAL_SPREAD <=0:
-            y1 = 0
-        else:
-            y1 = y-LOCAL_SPREAD
+            if x1 in range(0, 5001) and y1 in range(0, 5001):
+                return [x1, y1]
+            else:
+                raise ValueError
 
-        if y+LOCAL_SPREAD>=3041:
-            y2 = 3041
-        else:
-            y2 = y+LOCAL_SPREAD
+        except Exception as E:
+            print(Exception)
+            return [x, y]
 
-        tmp = []
-        for i in range(x1, x2):
-            tmp.append([])
-            for j in range(y1, y2):
-                tmp[-1].append(self.img_map[i][j])
+    def get_position(self, position):
+        x, y = map(int, position)
+        pixel = self.img_map.getpixel((x, y))[:3]
+        return COLOR_DATA[pixel]
         
-        tmp = numpy.array(tmp)
-        im = Image.fromarray(tmp)
-        im.save("database/tmp_img.png")
-
-        del tmp
-        del im
-        return open("database/tmp_img.png", 'rb')
-
 
 MAP = GlobalMap()

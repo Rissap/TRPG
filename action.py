@@ -15,8 +15,7 @@ from mainaction import QuestAction
 from mainaction import NoteAction
 
 
-DEFAULT_POSITION = numpy.array([1521, 1521])
-DEFAULT_EXPLORED = numpy.array([[1521, 1521]])
+DEFAULT_POSITION = [2500, 2500]
 
 
 class Action(ABC):
@@ -142,10 +141,8 @@ class RegisterAction(Action):
 
                 self.player.data.action == 0
                 self.player.data.text = "registered"
-                born = date.today()
-                self.player.data.born = str(born.day)+"-"+str(born.month)+"-"+str(born.year)
+                self.player.data.born = str(date.today())
                 self.player.data.position = DEFAULT_POSITION
-                self.player.data.explored = DEFAULT_EXPLORED
                 self.image = open("database/registered.png", 'rb')
             else:
                 self.player.data.text = "Начать приключение!"
