@@ -1,4 +1,5 @@
 import sqlite3
+import json
 
 from person import Player
 from person import PersonData
@@ -11,6 +12,8 @@ GET_ANSWER = """ SELECT message.data, keyboard.data FROM scripts
                 WHERE keyword='{0}' AND point={1} """
 
 LATEST_ID = """ SELECT max(id) FROM player_race """
+
+LATEST_QUEST = """ SELECT max(id) FROM player_quest """
 
 LATEST_NOTE_ID = """ SELECT max(id) FROM notes """
 
@@ -28,27 +31,28 @@ SAVE_RACE_DATA = """ INSERT INTO player_race VALUES ({0},"{1}",{2},{3},{4},{5},{
 
 SAVE_PERSON_DATA = """ INSERT INTO players VALUES ({0},{1},"{2}","{3}",{4},"{5}","{6}","{7}","{8}") """
 
+SELECT_PLACE_QUEST = """ SELECT name FROM quest_place JOIN quest ON quest.id=quest_place.quest  WHERE quest_place.place={0}"""
+
+GET_SPECIAL_POSITION = """ SELECT * FROM special_place WHERE x={0} AND y={1} """
+
 UPDATE_PERSON_DATA = """ UPDATE players SET age={4}, gender="{5}", bio="{6}", born="{7}", position="{8}" WHERE id={0} """
 
 UPDATE_RACE_DATA = """ UPDATE player_race SET health={2}, mana={3}, attack={4}, defence={5}, magic_attack={6}, magic_defence={7}, weight={8} WHERE id={0}"""
 
-'''
-IS_RACE = """ SELECT * from `race` WHERE name='{0}' AND id<5 """
+SET_QUEST = """ INSERT INTO player_quest VALUES ({0}, {1}, {2}, "{3}")"""
 
-ALL_FROM_PLAYER = """ SELECT * FROM player  """
+IS_NUM_OF_QUEST = """ SELECT * FROM quest WHERE id={0} """
 
-PLAYER_ALREADY_EXIST = """ SELECT * FROM player WHERE id={0} """
+IS_ALREADY_TAKEN_QUEST = """ SELECT * FROM player_quest WHERE players={0} AND quest={1} """
 
-NEW_PLAYER_DATA = """ INSERT INTO player VALUES ({0}, {1}, '{2}', '{3}', '{4}', {5}, '{6}', '{7}', {8}, {9}, '{10}' ) """
-
-OLD_PLAYER_DATA = """ UPDATE player SET action={1} name='{2}' gender='{3}' race='{4}' age={5} bio='{6}' register='{7}' gold = {8} glory={9} position = '{10}' """
-'''
-
+GET_PLAYER_QUEST = """ SELECT quest.name FROM player_quest JOIN quest on player_quest.quest=quest.id WHERE players={0} AND status="{1}" """
 
 class GlobalDatabase():
     def __init__(self):
         self.data = sqlite3.connect('database/bot.db', check_same_thread=False)
         self.base = self.data.cursor()
+        
+        self.quest = json.loads(open("database/quests.json", 'rb').read())
 
     def get_answer(self, text, point):
         answer = self.base.execute(GET_ANSWER.format(text, point)).fetchall()
@@ -146,6 +150,88 @@ class GlobalDatabase():
             note_id+=1
 
         self.data.commit()
+
+    def get_quest(self, uniq, point=None):
+        if type(point)==list:
+            x, y = point
+            data = self.base.execute(GET_SPECIAL_POSITION.format(x, y)).fetchall()
+            if data==[]:
+                return "Здесь нет заданий!"
+            uniq = data[0][0]                
+        
+        tmp=""
+        data = self.base.execute(SELECT_PLACE_QUEST.format(uniq)).fetchall()
+        if data!=[]:
+            tmp+="\nДоступные задания:\n"
+            i=1
+            for el in data[0]:
+                tmp+="№"+str(i)+" "+el+"\n"
+                i+=1
+            return tmp
+        return "Здесь нет заданий!"
+
+    def discover_place(self, position):
+        x, y = position
+        data = self.base.execute(GET_SPECIAL_POSITION.format(x, y)).fetchall()
+        if data!=[]:
+            tmp = data[0][3]
+            tmp+=self.get_quest(data[0][0])
+
+            return tmp
+        else:
+            return "Здесь нечего исследовать!"
+
+    def accept_player_quest(self, uniq, text, request=False):
+        try:
+            text = int(text)-1
+            d1 = self.base.execute(IS_NUM_OF_QUEST.format(text)).fetchall()
+            d2 = self.base.execute(IS_ALREADY_TAKEN_QUEST.format(uniq, text)).fetchall()
+
+            #if quest id is not in quest list
+            if d1 == []:
+                if request:
+                    return None
+                raise ValueError
+        
+            if request and d2 != []:
+                name = d1[0][1]
+                return self.quest[name]
+
+            elif request and d2 == []:
+                return None
+            
+            else:
+                pass
+
+            #if player already has this quest
+            if d2 != []:
+                raise ValueError
+
+            ID = self.base.execute(LATEST_QUEST).fetchall()
+            if ID[0][0] == None:
+                ID = 1
+            else:
+                ID = ID[0][0]
+
+            self.base.execute(SET_QUEST.format(ID, uniq, text, "apply"))
+            self.data.commit()
+            return "Ты успешно взял квест!"
+        except Exception as E:
+            print(E)
+            return "Ты не смог взять квест!"
+
+    def get_player_quest(self, uniq):
+        tmp="\n"
+        data = self.base.execute(GET_PLAYER_QUEST.format(uniq, "apply")).fetchall()
+        if data == []:
+            return "У тебя нет заданий!"
+            
+        for el in range(len(data)):
+            tmp+="№ "+str(el+1)+" "+data[el][0]+"\n"
+        return tmp
+
+    def prepare_quest(self, uniq, text):
+        return True
 
 
 DATABASE = GlobalDatabase()

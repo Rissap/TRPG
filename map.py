@@ -74,7 +74,7 @@ class GlobalMap():
         return open("database/tmp_img.png", 'rb')
 
     def move_person(self, _from, _to):
-        print("coords - ",_from, _to)
+        #print("coords - ", _from, _to)
         x, y = _from
         try:
             x1, y1 = int(_to[0]), int(_to[1])
@@ -88,7 +88,7 @@ class GlobalMap():
             print(Exception)
             return [x, y]
 
-    def get_position(self, position):
+    def get_point_description(self, position):
         x, y = map(int, position)
         pixel = self.img_map.getpixel((x, y))[:3]
         return COLOR_DATA[pixel]

@@ -12,6 +12,7 @@ from keygen import KEYGEN
 from mainaction import WorldAction
 from mainaction import PersonAction
 from mainaction import QuestAction
+from mainaction import ConcreteQuest
 from mainaction import NoteAction
 
 
@@ -235,7 +236,11 @@ class MainAction():
         txt = self.player.data.text
         act = self.player.data.action
 
-        if txt == "Назад" or act == 999:
+        if act in range(5000, 6000) or txt == "Начать квест!":
+            #can't go back from the quest
+            self.action_handler = ConcreteQuest(self.player)
+        
+        elif txt == "Назад" or act == 999:
             self.action_handler = DefaultHandler("back")
             self.player.data.action = 0
         
@@ -251,6 +256,7 @@ class MainAction():
         elif act in range(4000, 5000) or txt == "Блокнот":
             self.action_handler = NoteAction(self.player)
         
+
         else:
             self.action_handler = DefaultHandler("unknown")
 

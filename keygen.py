@@ -1,17 +1,21 @@
 class KeyboardGenerator():
     """generating different matrix of keyboard"""
     def __init__(self):
-        self.pattern = [[2, 1, 2], [2, 2], [2], [1,1,1,1,2], [1,1,1,2], [1,1,1], [3,3,3,1]]
-        self.foo = [self.gen212, self.gen22, self.gen1, self.gen11112, self.gen1112, self.gen111, self.gen3331]
+        self.pattern = [[2, 1, 2], [2, 2], [2], [1,1,1,1,2], [1,1,1,2], [1,1,1], [3,3,3,1], [1], [1,1], [1,1,1], [1,1,1,1], [1,1,1,1,1]]
+        self.foo = [self.gen212, self.gen22, self.gen01, self.gen11112, self.gen1112, self.gen111, self.gen3331, self.gen1, self.gen1, self.gen1, self.gen1, self.gen1]
 
     def generate(self, keyboard, text):
         a = []
         for el in text.split("||"):
             a.append(len(el.split("|")))
 
-        for index in range(len(self.pattern)):
-            if self.pattern[index] == a:
-                self.foo[index](keyboard, text)
+        index = self.pattern.index(a)
+        self.foo[index](keyboard, text)
+    
+    def gen1(self, keyboard, text):
+        rows = text.split("||")
+        for el in rows:
+            keyboard.row(el)
 
     def gen212(self, keyboard, text):
         rows = text.split("||")
@@ -26,7 +30,7 @@ class KeyboardGenerator():
         keyboard.row(a[0], a[1])
         keyboard.row(b[0], b[1])
 
-    def gen1(self, keyboard, text):
+    def gen01(self, keyboard, text):
         a = text.split("|")
         keyboard.row(a[0], a[1])
 

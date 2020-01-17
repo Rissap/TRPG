@@ -181,6 +181,8 @@ class PersonData():
         self.text = ""
         self.register = False
         self.action = None
+        self.quest = None
+        self.quest_step = []
 
         self.name = ""
         self.gender = ""
@@ -202,7 +204,7 @@ class PersonData():
         self.gender = data[5]
         self.bio = data[6]
         self.born = data[7]
-        self.position = numpy.array(data[8].split(" "), dtype=int)
+        self.position = list(map(int, data[8].split(" ")))
 
     def get_explored(self, raw_pos):
         tmp = raw_pos[:-1].split("|")
