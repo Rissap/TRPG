@@ -3,6 +3,13 @@ from rest_framework import serializers
 from main import models
 
 
+class PlayerAccoutSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.PlayerAccout
+        fields = ['id', 'username']
+
+"""
+
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Product
@@ -60,3 +67,4 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Order
         fields = '__all__'
+"""        

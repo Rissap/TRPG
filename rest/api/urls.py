@@ -6,9 +6,9 @@ app_name = 'product_api'
 urlpatterns = [
 	path('server/', views.ServerAvailableView.as_view(), name="server_available"),
 
-	path('user/create/', views.RegisterUserView.as_view(), name="user_register"),
-	path('user/login/', views.LoginUserView.as_view(), name="user_login"),
-	path('user/logout/', views.LogoutUserView.as_view(), name="user_logout"),
+	path('players/create/', views.RegisterUserView.as_view(), name="user_register"),
+	path('players/login/', views.LoginUserView.as_view(), name="user_login"),
+	path('players/logout/', views.LogoutUserView.as_view(), name="user_logout"),
 
 ]
 

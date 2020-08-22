@@ -1,6 +1,5 @@
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User
 
 from rest_framework import generics
 from rest_framework.views import APIView
@@ -8,27 +7,38 @@ from rest_framework.response import Response
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 
+from main import models
+
 
 class ServerAvailableView(APIView):
     def get(self, request):
-        return Response({'available': True})
+        return Response({'response': True})
 
 
 class RegisterUserView(APIView):
-    def get(self, request):
-        return Response({'get': True})
+    def post(self, request):
+        try:
+            username = request.POST.get("username")
+            email = request.POST.get("email")
+            password = request.POST.get("password")
+            player = models.PlayerAccount(username=username, email=email, password=password)
+            player.save()
+        except Exception as E:
+            print(E)
+            return Response({'response': False})
+        return Response({'response': True})
 
 
 class LoginUserView(APIView):
     def get(self, request):
-        return Response({'get': True})
+        return Response({'response': True})
 
 
 class LogoutUserView(APIView):
     def get(self, request):
-        return Response({'get': True})
+        return Response({'response': True})
 
-        
+            
 """
 from datetime import datetime
 from services import sales

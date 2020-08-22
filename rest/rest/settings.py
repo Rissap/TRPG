@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
@@ -24,13 +27,12 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     'riisatoro.pythonanywhere.com',
-    '127.0.0.1:8000'
+    '127.0.0.1'
     ]
-
 
 # Application definition
 
@@ -75,6 +77,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'rest.wsgi.application'
 
+
+REST_FRAMEWORK = {
+    
+}
+
+AUTH_USER_MODEL = 'main.PlayerAccount'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
