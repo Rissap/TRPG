@@ -1,150 +1,13 @@
-CREATE TABLE scripts (
-  id                    INTEGER NOT NULL,
-  keyword               TEXT,
-  point                 INTEGER,
-  MESSAGE               INTEGER,
-  keyboard              INTEGER,
-CONSTRAINT PK_scripts PRIMARY KEY (id),
-CONSTRAINT FK_REFERENCE_2 FOREIGN KEY (keyboard)  REFERENCES keyboard (ID),
-CONSTRAINT FK_r FOREIGN KEY (MESSAGE)  REFERENCES message (id)
-) 
-;
-
-CREATE TABLE keyboard ( 
-  ID             INTEGER NOT NULL,
-  data           INTEGER,
-CONSTRAINT PK_keyboard PRIMARY KEY (ID)
-) 
-;
-
-CREATE TABLE message ( 
-  id             INTEGER NOT NULL,
-  data           TEXT,
-CONSTRAINT PK_message PRIMARY KEY (id)
-) 
-;
-
-CREATE TABLE players ( 
-  id             INTEGER NOT NULL,
-  player_race    INTEGER,
-  action         TEXT,
-  name           TEXT,
-  age            INTEGER,
-  gender         TEXT,
-  bio            TEXT,
-  born           TEXT,
-  position       TEXT,
-CONSTRAINT PK_players PRIMARY KEY (id),
-CONSTRAINT FK_REFERENCE_5 FOREIGN KEY (player_race)  REFERENCES player_race (id)
-) 
-;
-
-CREATE TABLE quest ( 
-  id             INTEGER NOT NULL,
-  name           TEXT,
-CONSTRAINT PK_quest PRIMARY KEY (id)
-) 
-;
-
-CREATE TABLE player_quest ( 
-  id             INTEGER NOT NULL,
-  players        INTEGER,
-  quest          INTEGER,
-  status         TEXT,
-CONSTRAINT PK_player_quest PRIMARY KEY (id),
-CONSTRAINT FK_REFERENCE_4 FOREIGN KEY (players)  REFERENCES players (id),
-CONSTRAINT FK_REFERENCE_3 FOREIGN KEY (quest)  REFERENCES quest (id)
-) 
-;
-
-CREATE TABLE player_race ( 
-  id             INTEGER NOT NULL,
-  name           TEXT,
-  health         INTEGER,
-  mana           INTEGER,
-  attack         INTEGER,
-  defence        INTEGER,
-  magic_attack   REAL,
-  magic_defence  REAL,
-  weight         INTEGER,
-CONSTRAINT PK_player_race PRIMARY KEY (id)
-) 
-;
-
-CREATE TABLE own ( 
-  id             INTEGER NOT NULL,
-  player         INTEGER,
-  type           TEXT,
-  name           TEXT,
-  data           TEXT,
-  position       TEXT,
-CONSTRAINT PK_own PRIMARY KEY (id),
-CONSTRAINT FK_REFERENCE_6 FOREIGN KEY (player)  REFERENCES players (id)
-) 
-;
-
-CREATE TABLE dignity ( 
-  id             INTEGER NOT NULL,
-  player         INTEGER,
-  name           TEXT,
-  data           TEXT,
-CONSTRAINT PK_dignity PRIMARY KEY (id),
-CONSTRAINT FK_REFERENCE_7 FOREIGN KEY (player)  REFERENCES players (id)
-) 
-;
-
-CREATE TABLE notes ( 
-  id             INTEGER NOT NULL,
-  player         INTEGER,
-  data           TEXT,F
-CONSTRAINT PK_notes PRIMARY KEY (id),
-CONSTRAINT FK_REFERENCE_8 FOREIGN KEY (player)  REFERENCES players (id)
-) 
-;
-
-
-CREATE TABLE special_place ( 
-  id                    INTEGER NOT NULL,
-  x                     INTEGER,
-  y                     INTEGER,
-  data                  INTEGER,
-CONSTRAINT PK_special_place PRIMARY KEY (id)
-) 
-;
-
-CREATE TABLE quest_place ( 
-  id                    INTEGER NOT NULL,
-  quest                 INTEGER,
-  place                 INTEGER,
-CONSTRAINT PK_quest_place PRIMARY KEY (id),
-CONSTRAINT FK_r5 FOREIGN KEY (quest)  REFERENCES quest (id),
-CONSTRAINT FK_r4 FOREIGN KEY (place)  REFERENCES special_place (id)
-) 
-;
-
-
-
-
-
-delete from players;
-delete from player_race;
-delete from own;
-delete from dignity;
-delete from notes;
- 
-delete from keyboard;
-delete from message;
-delete from scripts;
 
 INSERT INTO keyboard VALUES
   (0, ""),
-  (1, "Что это за место?|Кто ты?||Начать приключение!||Краткое инфо|О ролевой"),
+  (1, ""),
 
   (2, "Аласи|Элементали||Перевёртыши|Артифексы"),
   (3, "Господин|Госпожа"),
   (4, "Да, всё верно!|Нет, давай заново!"),
 
-  (5, "Персонаж||Мир||Задания||Блокнот||Помощь|Ошибки"),
+  (5, ),
 
   (6, "Карта||Перемещение||Местность||Назад|/Ошибки/"),
 
@@ -161,12 +24,12 @@ INSERT INTO keyboard VALUES
 
 INSERT INTO message VALUES
   (-1, ""),
-  (0, "Мир Раумор - огромный континент среди множества островов. Тут ни дня не проходит без битв, приключений и мирных соглашений. Ремесло и торговля буйно процветают в городах, а пустые чащи лесов ожидают заблудших путников для обеда."),
-  (1, "Я - Лис. Хвостатый демон, что владеет всей информацией. Обожаю приключения, квесты, и маленьких милых лисят."),
-  (2, "На твой выбор предоставляются четыре разумные расы:\nАласи, Артифексы, Перевёртыши, Элементали\nЧто отличает эти расы? Есть ли лучшая? Абсолютно всем расам доступен одинаковый набор характеристик, и способностей."),
-  (3, "Мы, создатели мира Раумор, желаем вам приятно провести время в текстовой ролевой игре. Делайте то, что пожелаете - никаких рамок или ограничений!"),
+  (0, ),
+  (1, ),
+  (2, ),
+  (3, ),
 
-  (4, "Приветствую в Рауморе - мире, полном беззакония и возможностей! Назови своё имя:"),
+  (4, ),
   (5, "Красивое имя. Теперь укажи свой возраст (от 16 до 90):"),
   (6, "Выбери себе расу. Хорошенько подумай, ты не сможешь изменить её. У каждой из рас есть преимущества и недостатки."),
   (7, "Ты господин или госпожа?"),
