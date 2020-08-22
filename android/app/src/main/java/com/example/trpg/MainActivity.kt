@@ -20,18 +20,14 @@ class MainActivity : AppCompatActivity() {
 
         val queue = Volley.newRequestQueue(this)
         val url = "http://riisatoro.pythonanywhere.com/api/v1/server/"
-
-// Request a string response from the provided URL.
+        
         val stringRequest = StringRequest(Request.Method.GET, url,
                 Response.Listener<String> { response ->
-                    // Display the first 500 characters of the response string.
-                    field.text = "Response is: ${response.substring(0)}"
+                    field.text = "$response"
                 },
                 Response.ErrorListener { field.text = "That didn't work!" })
 
-// Add the request to the RequestQueue.
         queue.add(stringRequest)
 
-        field.text = "Hello pussy"
     }
 }
