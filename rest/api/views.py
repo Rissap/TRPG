@@ -28,7 +28,7 @@ class LogoutUserView(APIView):
     def get(self, request):
         return Response({'get': True})
 
-
+        
 """
 from datetime import datetime
 from services import sales
