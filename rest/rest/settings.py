@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -79,7 +80,9 @@ WSGI_APPLICATION = 'rest.wsgi.application'
 
 
 REST_FRAMEWORK = {
-    
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',  # <-- And here
+    ],
 }
 
 AUTH_USER_MODEL = 'main.PlayerAccount'

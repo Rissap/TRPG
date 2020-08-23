@@ -36,7 +36,7 @@ class PlayerAccountManager(BaseUserManager):
 
 class PlayerAccount(AbstractBaseUser):
 	email = models.EmailField(verbose_name="email", max_length=60, unique=True)
-	username = models.CharField(max_length=30, unique=True)
+	username = models.CharField(max_length=30)
 	last_login = models.DateTimeField(verbose_name='last login', auto_now=True)
 	is_admin = models.BooleanField(default=False)
 	is_active = models.BooleanField(default=True)

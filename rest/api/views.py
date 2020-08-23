@@ -1,11 +1,13 @@
-from django.shortcuts import get_object_or_404
+from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.authentication import BasicAuthentication
+from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import BasicAuthentication
 
 from main import models
 
@@ -23,23 +25,33 @@ class RegisterUserView(APIView):
             password = request.POST.get("password")
             player = models.PlayerAccount(username=username, email=email, password=password)
             player.save()
+            token, created = Token.objects.get_or_create(user=player)
         except Exception as E:
             print(E)
             return Response({'response': False})
-        return Response({'response': True})
+        return Response({'response': True, "token": token.key})
 
 
 class LoginUserView(APIView):
-    def get(self, request):
-        return Response({'response': True})
+    def post(self, request):
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        user = authenticate(username=email, password=password)
+        token, created = Token.objects.get_or_create(user=user)
+
+        print(token)
+        
+        return Response({'response': True, "token": token.key})
 
 
+
+"""
 class LogoutUserView(APIView):
     def get(self, request):
         return Response({'response': True})
 
             
-"""
 from datetime import datetime
 from services import sales
 from main import models
